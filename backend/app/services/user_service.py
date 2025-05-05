@@ -1,12 +1,13 @@
 from app.db import models, schemas
-from passlib.content import CryptContent
+from fastapi import HTTPException
+from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-pwd_content = CryptContent(schemas=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def get_password_hash(password):
-    return pwd_content.hash(password)
+    return pwd_context.hash(password)
 
 
 def create_user(db: Session, user: schemas.UserCreate):
@@ -15,12 +16,26 @@ def create_user(db: Session, user: schemas.UserCreate):
         email=user.email,
         full_name=user.full_name,
         hashed_password=hashed_password,
-        is_admin=user.is_admin,
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def verify_password(plain_password: str, hashed_password: str):
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def login_user(db: Session, email: str, password: str):
+    user = get_user_by_email(db, email)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not verify_password(password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
+    return user
 
 
 def get_user_by_email(db: Session, email: str):

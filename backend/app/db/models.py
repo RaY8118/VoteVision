@@ -1,4 +1,5 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
+                        func)
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -9,7 +10,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     firebase_uid = Column(String, unique=True, index=True, nullable=True)
-    name = Column(String, nullable=False)
+    full_name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     has_voted = Column(Integer, default=0)
@@ -24,6 +25,7 @@ class Candidate(Base):
     name = Column(String, nullable=False)
     party = Column(String, nullable=False)
     position = Column(String, nullable=False)
+    manifesto = Column(String, nullable=False)
     vote_count = Column(Integer, default=0)
 
     votes = relationship("Vote", back_populates="candidate")
@@ -39,3 +41,13 @@ class Vote(Base):
 
     voter = relationship("User", back_populates="votes")
     candidate = relationship("Candidate", back_populates="votes")
+
+
+class Voter(Base):
+    __tablename__ = "voters"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
+    has_voted = Column(Boolean, default=False)
+
+    user = relationship("User", backref="voter_profile")

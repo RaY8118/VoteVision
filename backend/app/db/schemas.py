@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr
@@ -6,7 +7,6 @@ from pydantic import BaseModel, EmailStr
 class UserBase(BaseModel):
     email: EmailStr
     full_name: str
-    is_admin: bool = False
 
 
 class UserCreate(UserBase):
@@ -17,13 +17,24 @@ class UserOut(UserBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+
+class LoginInput(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
 
 
 class CandidateBase(BaseModel):
     name: str
     party: str
     manifesto: str
+    position: str
 
 
 class CandidateCreate(CandidateBase):
@@ -34,20 +45,38 @@ class CandidateOut(CandidateBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class VoterBase(BaseModel):
-    full_name: str
-    email: EmailStr
+    user_id: int
 
 
 class VoterCreate(VoterBase):
-    password: str
+    pass
 
 
 class VoterOut(VoterBase):
     id: int
+    user_id: int
+    has_voted: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+
+class VoteBase(BaseModel):
+    voter_id: int
+    candidate_id: int
+
+
+class VoteCreate(VoteBase):
+    pass
+
+
+class VoteOut(VoteBase):
+    id: int
+    timestamp: datetime
+
+    class Config:
+        from_attributes = True
