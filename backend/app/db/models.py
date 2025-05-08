@@ -26,6 +26,7 @@ class Candidate(Base):
     __tablename__ = "candidates"
 
     id = Column(Integer, primary_key=True, index=True)
+    candidate_id = Column(String(6), unique=True, nullable= False, index=True)
     name = Column(String, nullable=False)
     party = Column(String, nullable=False)
     manifesto = Column(String, nullable=False)

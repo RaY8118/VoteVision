@@ -44,6 +44,8 @@ class CandidateCreate(CandidateBase):
 
 class CandidateOut(CandidateBase):
     id: int
+    candidate_id: str
+    vote_count: int
 
     class Config:
         from_attributes = True
