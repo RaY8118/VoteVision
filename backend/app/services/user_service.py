@@ -25,6 +25,7 @@ def create_user(db: Session, user: schemas.UserCreate):
         email=user.email,
         full_name=user.full_name,
         hashed_password=hashed_password,
+        role=user.role or "voter"
     )
     db.add(db_user)
     db.commit()
@@ -57,3 +58,12 @@ def get_user_by_id(db: Session, user_id: str):
 
 def get_users(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.User).offset(skip).limit(limit).all()
+
+def update_user_role(db: Session, user_id:str, new_role:str):
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if not user:
+        return None
+    user.role = new_role
+    db.commit()
+    db.refresh(user)
+    return user

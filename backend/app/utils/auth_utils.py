@@ -1,10 +1,11 @@
-from app.core.token import ALGORITHM, SECRET_KEY
-from app.db.database import get_db
-from app.services.user_service import get_user_by_id
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import ExpiredSignatureError, JWTError, jwt
 from sqlalchemy.orm import Session
+
+from app.core.token import ALGORITHM, SECRET_KEY
+from app.db.database import get_db
+from app.services.user_service import get_user_by_id
 
 security = HTTPBearer()
 
@@ -27,3 +28,20 @@ def get_current_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+
+def require_role(user, allowed_roles: list[str]):
+    if user.role not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+
+def require_admin(current_user = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return current_user
+
+
+def require_voter(current_user = Depends(get_current_user)):
+    if current_user.role != "voter":
+        raise HTTPException(status_code=403, detail="Access denied: Voter role required")
+    return current_user
