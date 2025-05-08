@@ -35,15 +35,9 @@ class CandidateBase(BaseModel):
     name: str
     party: str
     manifesto: str
-    position: str
-
-
-class CandidateCreate(CandidateBase):
-    pass
 
 
 class CandidateOut(CandidateBase):
-    id: int
     candidate_id: str
     vote_count: int
 
@@ -55,13 +49,13 @@ class VoterBase(BaseModel):
     user_id: int
 
 
-class VoterCreate(VoterBase):
-    pass
+class VoterCreate(BaseModel):
+    candidate_id: str 
 
 
 class VoterOut(VoterBase):
     id: int
-    user_id: int
+    user_id: str 
     has_voted: bool
 
     class Config:
@@ -69,8 +63,8 @@ class VoterOut(VoterBase):
 
 
 class VoteBase(BaseModel):
-    voter_id: int
-    candidate_id: int
+    voter_id: str 
+    candidate_id: str 
 
 
 class VoteCreate(VoteBase):

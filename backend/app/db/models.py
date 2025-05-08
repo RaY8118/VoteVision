@@ -39,8 +39,8 @@ class Vote(Base):
     __tablename__ = "votes"
 
     id = Column(Integer, primary_key=True, index=True)
-    voter_id = Column(Integer, ForeignKey("users.id"))
-    candidate_id = Column(Integer, ForeignKey("candidates.id"))
+    voter_id = Column(String, ForeignKey("users.user_id"))
+    candidate_id = Column(String, ForeignKey("candidates.candidate_id"))
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
     voter = relationship("User", back_populates="votes")
