@@ -50,12 +50,12 @@ class VoterBase(BaseModel):
 
 
 class VoterCreate(BaseModel):
-    candidate_id: str 
+    candidate_id: str
 
 
 class VoterOut(VoterBase):
     id: int
-    user_id: str 
+    user_id: str
     has_voted: bool
 
     class Config:
@@ -63,8 +63,8 @@ class VoterOut(VoterBase):
 
 
 class VoteBase(BaseModel):
-    voter_id: str 
-    candidate_id: str 
+    voter_id: str
+    candidate_id: str
 
 
 class VoteCreate(VoteBase):
@@ -77,6 +77,19 @@ class VoteOut(VoteBase):
 
     class Config:
         from_attributes = True
+
+
+class VoteResults(BaseModel):
+    name: str
+    party: str
+    vote_count: int
+
+
+class VoteSummary(BaseModel):
+    results: list[VoteResults]
+    winner: VoteResults
+
+
 class VotingSessionBase(BaseModel):
     is_active: bool
 
