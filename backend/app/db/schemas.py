@@ -77,3 +77,18 @@ class VoteOut(VoteBase):
 
     class Config:
         from_attributes = True
+class VotingSessionBase(BaseModel):
+    is_active: bool
+
+
+class VotingSessionCreate(VotingSessionBase):
+    pass
+
+
+class VotingSessionOut(VotingSessionBase):
+    id: int
+    start_time: datetime
+    end_time: Optional[datetime]
+
+    class Config:
+        from_attributes = True

@@ -46,3 +46,11 @@ class Vote(Base):
     voter = relationship("User", back_populates="votes")
     candidate = relationship("Candidate", back_populates="votes")
 
+
+class VotingSession(Base):
+    __tablename__ = "voting_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    start_time = Column(DateTime(timezone=True), server_default=func.now())
+    end_time = Column(DateTime(timezone=True))
+    is_active = Column(Boolean, default=False)
