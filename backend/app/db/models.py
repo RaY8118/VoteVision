@@ -1,6 +1,5 @@
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer,
                         LargeBinary, String, func)
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from .database import Base

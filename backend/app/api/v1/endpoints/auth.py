@@ -1,7 +1,7 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
-from pydantic import BaseModel, EmailStr
+from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
 from app.core.token import create_access_token

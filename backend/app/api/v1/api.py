@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import (auth, candidate, face_recognition, user,
-                                  vote, voting_session)
+from app.api.v1.endpoints import auth, candidate, user, vote, voting_session
 
 api_router = APIRouter()
 

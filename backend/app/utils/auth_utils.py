@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import ExpiredSignatureError, JWTError, jwt
 from sqlalchemy.orm import Session
@@ -15,7 +15,8 @@ def get_current_user(
     db: Session = Depends(get_db),
 ):
     try:
-        payload = jwt.decode(token.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token.credentials, SECRET_KEY,
+                             algorithms=[ALGORITHM])
         user_id = payload.get("sub")
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid token")
@@ -35,13 +36,14 @@ def require_role(user, allowed_roles: list[str]):
         raise HTTPException(status_code=403, detail="Not authorized")
 
 
-def require_admin(current_user = Depends(get_current_user)):
+def require_admin(current_user=Depends(get_current_user)):
     if current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
     return current_user
 
 
-def require_voter(current_user = Depends(get_current_user)):
+def require_voter(current_user=Depends(get_current_user)):
     if current_user.role != "voter":
-        raise HTTPException(status_code=403, detail="Access denied: Voter role required")
+        raise HTTPException(
+            status_code=403, detail="Access denied: Voter role required")
     return current_user

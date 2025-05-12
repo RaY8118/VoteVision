@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.db import schemas
 from app.db.database import get_db
-from app.db.schemas import VoteResults, VoteSummary
+from app.db.schemas import VoteSummary
 from app.services import vote_service
 from app.utils.auth_utils import require_admin, require_voter
 

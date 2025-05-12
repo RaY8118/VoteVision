@@ -46,7 +46,7 @@ class CandidateOut(CandidateBase):
 
 
 class VoterBase(BaseModel):
-    user_id: int
+    user_id: str
 
 
 class VoterCreate(BaseModel):

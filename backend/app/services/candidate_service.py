@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.db import models, schemas
@@ -44,7 +44,8 @@ def get_candidates(db: Session, skip: int = 0, limit: int = 10):
 
 
 def delete_candidate(db: Session, candidate_id: str):
-    candidate = db.query(models.Candidate).filter_by(candidate_id=candidate_id).first()
+    candidate = db.query(models.Candidate).filter_by(
+        candidate_id=candidate_id).first()
     if not candidate:
         raise HTTPException(status_code=404, detail="Candidate not found")
     db.delete(candidate)
