@@ -1,5 +1,5 @@
-from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
-                        func)
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer,
+                        LargeBinary, String, func)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -16,6 +16,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     role = Column(String, default="voter")
     has_voted = Column(Integer, default=0)
+    face_encoding = Column(LargeBinary, nullable=True)
 
 
 class Candidate(Base):

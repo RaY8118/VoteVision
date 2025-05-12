@@ -1,4 +1,6 @@
-from fastapi import HTTPException
+import face_recognition
+import numpy as np
+from fastapi import HTTPException, UploadFile
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
@@ -21,7 +23,7 @@ def create_user(db: Session, user: schemas.UserCreate):
 
     hashed_password = get_password_hash(user.password)
     db_user = models.User(
-        user_id = new_user_id,
+        user_id=new_user_id,
         email=user.email,
         full_name=user.full_name,
         hashed_password=hashed_password,
@@ -59,11 +61,61 @@ def get_user_by_id(db: Session, user_id: str):
 def get_users(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.User).offset(skip).limit(limit).all()
 
-def update_user_role(db: Session, user_id:str, new_role:str):
+
+def update_user_role(db: Session, user_id: str, new_role: str):
     user = db.query(User).filter(User.user_id == user_id).first()
     if not user:
         return None
     user.role = new_role
     db.commit()
     db.refresh(user)
+    return user
+
+
+def create_user_with_face(db: Session, user: schemas.UserCreate, image_file: UploadFile):
+    # Generate unique user_id
+    while True:
+        new_user_id = generate_id()
+        if not db.query(User).filter_by(user_id=new_user_id).first():
+            break
+
+    # Now process the image and save user
+    image = face_recognition.load_image_file(image_file.file)
+    encodings = face_recognition.face_encodings(image)
+    if not encodings:
+        raise HTTPException(
+            status_code=400, detail="No face found in the image")
+
+    face_encoding = np.array(encodings[0])
+    hashed_password = get_password_hash(user.password)
+
+    db_user = models.User(
+        user_id=new_user_id,
+        email=user.email,
+        full_name=user.full_name,
+        hashed_password=hashed_password,
+        role=user.role or "voter",
+        face_encoding=face_encoding.tobytes()
+    )
+
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+def login_with_face(db: Session, image_file: UploadFile):
+    image = face_recognition.load_image_file(image_file.file)
+    encodings = face_recognition.face_encodings(image)
+    if not encodings:
+        raise HTTPException(
+            status_code=400, detail="No face found in the image")
+
+    input_encoding = encodings[0]
+    user = db.query(models.User).filter(
+        models.User.face_encoding == input_encoding.tobytes()).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
     return user
