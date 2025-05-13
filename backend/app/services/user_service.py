@@ -36,10 +36,12 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 
 def verify_password(plain_password: str, hashed_password: str):
+    """Verify a password"""
     return pwd_context.verify(plain_password, hashed_password)
 
 
 def login_user(db: Session, email: str, password: str):
+    """Login a user"""
     user = get_user_by_email(db, email)
 
     if not user:
@@ -51,18 +53,22 @@ def login_user(db: Session, email: str, password: str):
 
 
 def get_user_by_email(db: Session, email: str):
+    """Get a user by email"""
     return db.query(models.User).filter(models.User.email == email).first()
 
 
 def get_user_by_id(db: Session, user_id: str):
+    """Get a user by ID"""
     return db.query(models.User).filter(models.User.user_id == user_id).first()
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 10):
+    """Get all users with pagination"""
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
 def update_user_role(db: Session, user_id: str, new_role: str):
+    """Update a user's role"""
     user = db.query(User).filter(User.user_id == user_id).first()
     if not user:
         return None
@@ -73,7 +79,7 @@ def update_user_role(db: Session, user_id: str, new_role: str):
 
 
 def create_user_with_face(db: Session, user: schemas.UserCreate, image_file: UploadFile):
-    # Generate unique user_id
+    """Create a user with face data"""
     while True:
         new_user_id = generate_id()
         if not db.query(User).filter_by(user_id=new_user_id).first():
@@ -105,6 +111,7 @@ def create_user_with_face(db: Session, user: schemas.UserCreate, image_file: Upl
 
 
 def login_with_face(db: Session, image_file: UploadFile):
+    """Login a user with face data"""
     image = face_recognition.load_image_file(image_file.file)
     encodings = face_recognition.face_encodings(image)
     if not encodings:
