@@ -1,7 +1,8 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr
+from app.db import models
 
 
 class UserBase(BaseModel):
@@ -21,6 +22,13 @@ class UserOut(UserBase):
         from_attributes = True
 
 
+class UserInfo(BaseModel):
+    user_id: str
+    email: EmailStr
+    full_name: str
+    role: str
+
+
 class LoginInput(BaseModel):
     email: EmailStr
     password: str
@@ -37,42 +45,26 @@ class CandidateBase(BaseModel):
     manifesto: str
 
 
-class CandidateOut(CandidateBase):
-    candidate_id: str
-    vote_count: int
-
-    class Config:
-        from_attributes = True
-
-
-class VoterBase(BaseModel):
-    user_id: str
-
-
-class VoterCreate(BaseModel):
-    candidate_id: str
-
-
-class VoterOut(VoterBase):
-    id: int
-    user_id: str
-    has_voted: bool
-
-    class Config:
-        from_attributes = True
-
-
-class VoteBase(BaseModel):
-    voter_id: str
-    candidate_id: str
-
-
-class VoteCreate(VoteBase):
+class CandidateCreate(CandidateBase):
     pass
 
 
-class VoteOut(VoteBase):
-    id: int
+class CandidateOut(CandidateBase):
+    candidate_id: str
+
+    class Config:
+        from_attributes = True
+
+
+class VoteCreate(BaseModel):
+    candidate_id: str
+
+
+class VoteOut(BaseModel):
+    vote_id: str
+    election_id: str
+    voter_id: str
+    candidate_id: str
     timestamp: datetime
 
     class Config:
@@ -102,6 +94,45 @@ class VotingSessionOut(VotingSessionBase):
     id: int
     start_time: datetime
     end_time: Optional[datetime]
+
+    class Config:
+        from_attributes = True
+
+
+class ElectionBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    start_date: datetime
+    end_date: datetime
+
+
+class ElectionCreate(ElectionBase):
+    pass
+
+
+class ElectionOut(ElectionBase):
+    election_id: str
+    status: str
+    candidates: List[CandidateOut] = []
+
+    class Config:
+        from_attributes = True
+        json_encoders = {
+            models.ElectionStatus: lambda v: v.value
+        }
+
+
+class FaceVerificationRequest(BaseModel):
+    face_image: str  # Base64 encoded image
+
+
+class FaceRegistrationRequest(BaseModel):
+    face_image: str  # Base64 encoded image
+
+
+class FaceVerificationSession(BaseModel):
+    user_id: str
+    expires_at: datetime
 
     class Config:
         from_attributes = True
