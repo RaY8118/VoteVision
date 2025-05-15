@@ -13,10 +13,13 @@ router = APIRouter()
 @router.post("/", response_model=schemas.UserOut)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     """Create a new user"""
-    db_user = user_service.get_user_by_email(db, user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return user_service.create_user(db=db, user=user)
+    try:
+        db_user = user_service.get_user_by_email(db, user.email)
+        if db_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        return user_service.create_user(db=db, user=user)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/", response_model=list[schemas.UserOut])

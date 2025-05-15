@@ -109,28 +109,6 @@ async def verify_face(
     return {"message": "Face verification successful"}
 
 
-@router.post("/face/register")
-async def register_face(
-    face_data: schemas.FaceRegistrationRequest,
-    db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
-):
-    """Register or update face data for users"""
-    try:
-        image_data = face_data.face_image.split(',')[1] 
-        binary_data = base64.b64decode(image_data)
-        
-        current_user.face_encoding = binary_data
-        db.commit()
-        
-        return {"message": "Face data registered successfully"}
-    except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Failed to process face data: {str(e)}"
-        )
-
-
 @router.get("/face-status", response_model=dict)
 async def get_face_status(current_user: models.User = Depends(get_current_user)):
     return {

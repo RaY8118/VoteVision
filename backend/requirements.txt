@@ -41,7 +41,8 @@ pillow==11.2.1
 pluggy==1.5.0
 postgrest==1.0.1
 propcache==0.3.1
-psycopg2==2.9.10
+# psycopg2==2.9.10
+psycopg2-binary
 pyasn1==0.4.8
 pydantic==2.11.4
 pydantic_core==2.33.2
@@ -68,6 +69,9 @@ StrEnum==0.4.15
 supafunc==0.9.4
 tomli==2.2.1
 typer==0.15.3
+types-passlib==1.7.7.20250408
+types-pyasn1==0.6.0.20250208
+types-python-jose==3.4.0.20250224
 typing-inspection==0.4.0
 typing_extensions==4.13.2
 uvicorn==0.34.2
