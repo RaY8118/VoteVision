@@ -41,7 +41,7 @@ export function ProfilePage() {
 
   const handleLogout = () => {
     authService.logout();
-    navigate('/login');
+    navigate('/');
   };
 
   const handleFaceRegistered = async () => {

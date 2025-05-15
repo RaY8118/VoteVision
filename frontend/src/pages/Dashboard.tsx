@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { authService } from '../services/auth';
 import { electionService, Election } from '../services/election';
-import { faceService, FaceStatus } from '../services/face';
-import { FaceRegistrationModal } from '../components/FaceRegistrationModal/index';
 
 interface User {
   user_id: string;
@@ -19,17 +17,13 @@ export function Dashboard() {
   const [elections, setElections] = useState<Election[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [faceStatus, setFaceStatus] = useState<FaceStatus | null>(null);
-  const [showFaceRegistration, setShowFaceRegistration] = useState(false);
 
   const fetchUserData = async () => {
     try {
-      const [userData, faceData] = await Promise.all([
+      const [userData] = await Promise.all([
         authService.getCurrentUser(),
-        faceService.getFaceStatus()
       ]);
       setUser(userData);
-      setFaceStatus(faceData);
     } catch (err) {
       console.error('Failed to load user data:', err);
       setError('Failed to load user data');
@@ -52,17 +46,6 @@ export function Dashboard() {
     fetchElections();
   }, [navigate]);
 
-  const handleLogout = () => {
-    authService.logout();
-    navigate('/login');
-  };
-
-  const handleFaceRegistered = async () => {
-    const status = await faceService.getFaceStatus();
-    setFaceStatus(status);
-    setShowFaceRegistration(false);
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -81,13 +64,6 @@ export function Dashboard() {
         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-md">
           {error}
         </div>
-      )}
-
-      {showFaceRegistration && (
-        <FaceRegistrationModal
-          onClose={() => setShowFaceRegistration(false)}
-          onSuccess={handleFaceRegistered}
-        />
       )}
 
       {/* User Info Card */}

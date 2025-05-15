@@ -5,7 +5,7 @@ export function MainLayout() {
   const { user, isLoading, isAuthenticated } = useAuth();
 
   return (
-    <div className="min-h-screen bg-red-500">
+    <div className="min-h-screen bg-gray-50">
       {/* Background with gradient and pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100">
         <div className="absolute inset-0 opacity-30" style={{
