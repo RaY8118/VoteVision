@@ -21,7 +21,7 @@ class FaceService {
   private async uploadFace(file: File): Promise<void> {
     const formData = new FormData();
     formData.append('image', file);
-    await api.post('/auth/face/register', formData, {
+    await api.post('/auth/register/face', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -41,7 +41,7 @@ class FaceService {
 
   private async uploadVerification(file: File): Promise<void> {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('face_image', file);
     await api.post('/auth/face/verify', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

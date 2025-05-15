@@ -49,7 +49,7 @@ class AuthService {
   async loginWithFace(image: File): Promise<LoginResponse> {
     const formData = new FormData();
     formData.append('image', image);
-    const response = await api.post<LoginResponse>('/auth/face/verify', formData, {
+    const response = await api.post<LoginResponse>('/auth/login/face', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
