@@ -40,6 +40,8 @@ export function FaceRegistrationModal({ onClose, onSuccess }: FaceRegistrationMo
   const handleFaceRegistration = async () => {
     try {
       setIsCapturing(true);
+      setError(null);
+      
       if (!videoRef.current) return;
 
       const canvas = document.createElement('canvas');
@@ -51,9 +53,9 @@ export function FaceRegistrationModal({ onClose, onSuccess }: FaceRegistrationMo
       const imageData = canvas.toDataURL('image/jpeg');
       await faceService.registerFace(imageData);
       onSuccess();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Face registration error:', err);
-      setError('Failed to register face. Please try again.');
+      setError(err.response?.data?.detail || 'Failed to register face. Please try again.');
     } finally {
       setIsCapturing(false);
     }
@@ -78,6 +80,7 @@ export function FaceRegistrationModal({ onClose, onSuccess }: FaceRegistrationMo
         </div>
         <p className="text-gray-600 mb-4">
           Please look at your camera and click the button below to register your face.
+          Make sure you have good lighting and a clear view of your face.
         </p>
         <div className="flex justify-end gap-3">
           <Button

@@ -65,7 +65,7 @@ export function WebcamComponent({ onCapture, onError }: WebcamProps) {
       />
       <canvas ref={canvasRef} className="hidden" />
       <div className="mt-4 flex justify-center">
-        <Button onClick={handleCapture}>Capture</Button>
+        <Button onClick={handleCapture} className="text-lg">Capture</Button>
       </div>
     </div>
   );

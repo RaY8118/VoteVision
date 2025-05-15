@@ -32,8 +32,8 @@ export function FaceVerificationModal({ onClose, onVerified }: FaceVerificationM
 
       await faceService.verifyFace(imageData);
       onVerified();
-    } catch (err) {
-      setError('Face verification failed. Please try again.');
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Face verification failed. Please try again.');
       console.error('Face verification error:', err);
     } finally {
       setIsCapturing(false);
@@ -46,6 +46,7 @@ export function FaceVerificationModal({ onClose, onVerified }: FaceVerificationM
         <h2 className="text-xl font-semibold mb-4">Verify Your Identity</h2>
         <p className="text-gray-600 mb-4">
           Please verify your identity by capturing your face before voting.
+          Make sure you have good lighting and a clear view of your face.
         </p>
 
         {error && (
