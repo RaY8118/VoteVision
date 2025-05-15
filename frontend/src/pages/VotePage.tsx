@@ -33,7 +33,7 @@ export function VotePage() {
 
   const handleVote = async () => {
     if (!electionId || !selectedCandidate) return;
-    
+
     setIsLoading(true);
     setError(null);
     try {
@@ -43,7 +43,7 @@ export function VotePage() {
     } catch (err: any) {
       if (err.response?.status === 401) {
         setError('Please log in to vote');
-        setTimeout(() => navigate('/login'), 2000);
+        setTimeout(() => navigate('/'), 2000);
       } else if (err.response?.status === 400) {
         setError(err.response.data.detail || 'You have already voted in this election');
       } else {
@@ -71,7 +71,7 @@ export function VotePage() {
         <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Election Not Active</h2>
           <p className="text-gray-600 mb-4">
-            {election.status === 'upcoming' 
+            {election.status === 'upcoming'
               ? 'This election has not started yet.'
               : 'This election has ended.'}
           </p>
@@ -108,11 +108,10 @@ export function VotePage() {
               {election.candidates.map((candidate) => (
                 <div
                   key={candidate.candidate_id}
-                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                    selectedCandidate === candidate.candidate_id
+                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${selectedCandidate === candidate.candidate_id
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-gray-200 hover:border-blue-300'
-                  }`}
+                    }`}
                   onClick={() => setSelectedCandidate(candidate.candidate_id)}
                 >
                   <div className="flex items-center justify-between">
@@ -120,11 +119,10 @@ export function VotePage() {
                       <h3 className="font-medium text-gray-900">{candidate.name}</h3>
                       <p className="text-sm text-gray-500">{candidate.party}</p>
                     </div>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      selectedCandidate === candidate.candidate_id
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedCandidate === candidate.candidate_id
                         ? 'border-blue-500 bg-blue-500'
                         : 'border-gray-300'
-                    }`}>
+                      }`}>
                       {selectedCandidate === candidate.candidate_id && (
                         <div className="w-2 h-2 rounded-full bg-white"></div>
                       )}

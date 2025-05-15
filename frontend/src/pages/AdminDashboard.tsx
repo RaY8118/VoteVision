@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { authService } from '../services/auth';
 import { electionService, Election } from '../services/election';
-import { candidateService, Candidate } from '../services/candidate';    
+import { candidateService, Candidate } from '../services/candidate';
 
 interface User {
   user_id: string;
@@ -32,7 +32,7 @@ export function AdminDashboard() {
       } catch (err: any) {
         setError('Failed to load user data');
         if (err.response?.status === 401) {
-          navigate('/login');
+          navigate('/');
         }
       }
     };
@@ -58,7 +58,7 @@ export function AdminDashboard() {
 
   const handleLogout = () => {
     authService.logout();
-    navigate('/login');
+    navigate('/');
   };
 
   const handleStartElection = async (electionId: string) => {
@@ -85,7 +85,7 @@ export function AdminDashboard() {
     if (!window.confirm('Are you sure you want to delete this election? This action cannot be undone.')) {
       return;
     }
-    
+
     try {
       await electionService.deleteElection(electionId);
       const updatedElections = await electionService.getElections();
@@ -165,11 +165,10 @@ export function AdminDashboard() {
                   <tr key={election.election_id}>
                     <td className="px-6 py-4 whitespace-nowrap">{election.title}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        election.status === 'active' ? 'bg-green-100 text-green-800' : 
-                        election.status === 'completed' ? 'bg-gray-100 text-gray-800' : 
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${election.status === 'active' ? 'bg-green-100 text-green-800' :
+                        election.status === 'completed' ? 'bg-gray-100 text-gray-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        }`}>
                         {election.status}
                       </span>
                     </td>
@@ -194,7 +193,7 @@ export function AdminDashboard() {
                             End
                           </Button>
                         )}
-                        {(election.status === 'completed' || election.status === 'active') && (
+                        {election.status === 'completed' && (
                           <Button
                             size="sm"
                             variant="outline"

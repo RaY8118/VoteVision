@@ -8,6 +8,8 @@ import { ElectionForm } from '../pages/admin/ElectionForm';
 import { CandidateForm } from '../pages/admin/CandidateForm';
 import { VotePage } from '../pages/VotePage';
 import { ElectionResults } from '../pages/admin/ElectionResults';
+import { LandingPage } from '../pages/LandingPage';
+import { ProfilePage } from '../pages/ProfilePage';
 import { authService } from '../services/auth';
 import { useEffect, useState } from 'react';
 
@@ -97,12 +99,24 @@ export const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       {
+        path: '/',
+        element: <LandingPage />,
+      },
+      {
         path: 'login',
         element: <Login />,
       },
       {
         path: 'register',
         element: <Register />,
+      },
+      {
+        path: 'profile',
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'dashboard',

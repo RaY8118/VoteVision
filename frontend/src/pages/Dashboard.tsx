@@ -75,16 +75,6 @@ export function Dashboard() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <div className="flex gap-4">
-          {user?.role === 'voter' && !faceStatus?.has_face_data && (
-            <Button onClick={() => setShowFaceRegistration(true)}>
-              Register Face
-            </Button>
-          )}
-          <Button variant="outline" onClick={handleLogout}>
-            Logout
-          </Button>
-        </div>
       </div>
 
       {error && (
