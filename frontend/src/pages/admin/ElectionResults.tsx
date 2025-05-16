@@ -24,7 +24,7 @@ export function ElectionResults() {
   useEffect(() => {
     const fetchResults = async () => {
       if (!electionId) return;
-      
+
       try {
         const data = await electionService.getElectionResults(electionId);
         console.log('Fetched election results:', data);
@@ -84,7 +84,7 @@ export function ElectionResults() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-8 rounded-lg">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow rounded-lg p-6">
           <div className="mb-8">

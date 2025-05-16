@@ -4,6 +4,7 @@ import { Button } from '../components/ui/button';
 import { authService } from '../services/auth';
 import { faceService, FaceStatus } from '../services/face';
 import { FaceRegistrationModal } from '../components/FaceRegistrationModal/index';
+import { useAuth } from '../contexts/AuthContext';
 
 interface User {
   user_id: string;
@@ -14,6 +15,7 @@ interface User {
 
 export function ProfilePage() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [faceStatus, setFaceStatus] = useState<FaceStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,7 +42,7 @@ export function ProfilePage() {
   }, []);
 
   const handleLogout = () => {
-    authService.logout();
+    logout();
     navigate('/');
   };
 

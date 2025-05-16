@@ -56,11 +56,6 @@ export function AdminDashboard() {
     fetchData();
   }, [navigate]);
 
-  const handleLogout = () => {
-    authService.logout();
-    navigate('/');
-  };
-
   const handleStartElection = async (electionId: string) => {
     try {
       await electionService.startElection(electionId);
@@ -110,9 +105,6 @@ export function AdminDashboard() {
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <Button onClick={handleLogout} variant="outline">
-              Logout
-            </Button>
           </div>
         </div>
 

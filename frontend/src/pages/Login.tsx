@@ -57,7 +57,7 @@ export function Login() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md bg-white/35 backdrop-blur-lg rounded-lg p-6">
         <CardHeader>
           <CardTitle className="text-center">Sign in to your account</CardTitle>
           <CardDescription className="text-center">
@@ -80,14 +80,14 @@ export function Login() {
               <Button
                 variant={authMethod === 'password' ? 'default' : 'outline'}
                 onClick={() => setAuthMethod('password')}
-                className="text-lg"
+                className="text-lg hover:-translate-y-1 hover:border-purple-500/30 hover:shadow-[0_2px_8px_rgba(59,130,246,0.3)] transition-all"
               >
                 Password
               </Button>
               <Button
                 variant={authMethod === 'face' ? 'default' : 'outline'}
                 onClick={() => setAuthMethod('face')}
-                className="text-lg"
+                className="text-lg hover:-translate-y-1 hover:border-purple-500/30 hover:shadow-[0_2px_8px_rgba(59,130,246,0.3)] transition-all"
               >
                 Face Recognition
               </Button>
@@ -105,7 +105,7 @@ export function Login() {
                       name="email"
                       type="email"
                       required
-                      className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                      className="appearance-none rounded-md relative block w-full px-3 py-2 border border-violet-400 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                       placeholder="Email address"
                       value={formData.email}
                       onChange={handleInputChange}
@@ -120,7 +120,7 @@ export function Login() {
                       name="password"
                       type="password"
                       required
-                      className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                      className="appearance-none rounded-md relative block w-full px-3 py-2 border border-violet-400 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                       placeholder="Password"
                       value={formData.password}
                       onChange={handleInputChange}
@@ -130,7 +130,7 @@ export function Login() {
 
                 <Button
                   type="submit"
-                  className="w-full text-lg"
+                  className="text-lg w-full hover:-translate-y-1 hover:border-purple-500/30 hover:shadow-[0_2px_8px_rgba(59,130,246,0.3)] transition-all"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Signing in...' : 'Sign in'}

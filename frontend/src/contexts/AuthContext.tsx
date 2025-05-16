@@ -37,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: false,
     refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   const login = (token: string) => {

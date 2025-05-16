@@ -20,9 +20,7 @@ export function Dashboard() {
 
   const fetchUserData = async () => {
     try {
-      const [userData] = await Promise.all([
-        authService.getCurrentUser(),
-      ]);
+      const userData = await authService.getCurrentUser();
       setUser(userData);
     } catch (err) {
       console.error('Failed to load user data:', err);
@@ -46,10 +44,14 @@ export function Dashboard() {
     fetchElections();
   }, [navigate]);
 
+  const active = elections.filter(e => e.status === 'active');
+  const upcoming = elections.filter(e => e.status === 'upcoming');
+  const completed = elections.filter(e => e.status === 'completed');
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600" />
       </div>
     );
   }
@@ -66,102 +68,121 @@ export function Dashboard() {
         </div>
       )}
 
-      {/* User Info Card */}
-      <div className="bg-white shadow rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Welcome, {user?.full_name}</h2>
+      {/* User Info */}
+      <DashboardSection title={`Welcome, ${user?.full_name}`}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <p className="text-sm text-gray-500">Email</p>
-            <p className="text-gray-900">{user?.email}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Role</p>
-            <p className="text-gray-900 capitalize">{user?.role}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">User ID</p>
-            <p className="text-gray-900">{user?.user_id}</p>
-          </div>
+          <InfoItem label="Email" value={user?.email} />
+          <InfoItem label="Role" value={user?.role} />
+          <InfoItem label="User ID" value={user?.user_id} />
         </div>
-      </div>
+      </DashboardSection>
 
       {/* Active Elections */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Active Elections</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {elections
-            .filter((election) => election.status === 'active')
-            .map((election) => (
-              <div
-                key={election.election_id}
-                className="border rounded-lg p-4 hover:shadow-md transition-shadow"
-              >
-                <h3 className="text-lg font-medium text-gray-900 mb-2">{election.title}</h3>
-                <p className="text-gray-600 mb-4">{election.description}</p>
-                <div className="flex justify-between items-center text-sm text-gray-500">
-                  <span>Ends: {new Date(election.end_date).toLocaleDateString()}</span>
-                  <Button
-                    onClick={() => navigate(`/elections/${election.election_id}`)}
-                    size="sm"
-                  >
-                    Vote Now
-                  </Button>
-                </div>
-              </div>
-            ))}
-        </div>
-      </div>
+      <DashboardSection title="Active Elections">
+        <ElectionGrid
+          elections={active}
+          emptyMessage="No active elections scheduled."
+          renderAction={(e) => (
+            <Button size="sm" onClick={() => navigate(`/elections/${e.election_id}`)}>
+              Vote Now
+            </Button>
+          )}
+          dateLabel="Ends"
+          dateKey="end_date"
+        />
+      </DashboardSection>
 
       {/* Upcoming Elections */}
-      <div className="bg-white shadow rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Upcoming Elections</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {elections
-            .filter(election => election.status === 'upcoming')
-            .map(election => (
-              <div key={election.election_id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">{election.title}</h3>
-                <p className="text-gray-600 mb-4">{election.description}</p>
-                <div className="flex justify-between items-center text-sm text-gray-500">
-                  <span>Starts: {new Date(election.start_date).toLocaleDateString()}</span>
-                  <Button variant="outline" disabled>
-                    Coming Soon
-                  </Button>
-                </div>
-              </div>
-            ))}
-          {elections.filter(election => election.status === 'upcoming').length === 0 && (
-            <p className="text-gray-500 col-span-full text-center py-4">No upcoming elections scheduled.</p>
+      <DashboardSection title="Upcoming Elections">
+        <ElectionGrid
+          elections={upcoming}
+          emptyMessage="No upcoming elections scheduled."
+          renderAction={() => (
+            <Button variant="outline" disabled>
+              Coming Soon
+            </Button>
           )}
-        </div>
-      </div>
+          dateLabel="Starts"
+          dateKey="start_date"
+        />
+      </DashboardSection>
 
       {/* Completed Elections */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Completed Elections</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {elections
-            .filter(election => election.status === 'completed')
-            .map(election => (
-              <div key={election.election_id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">{election.title}</h3>
-                <p className="text-gray-600 mb-4">{election.description}</p>
-                <div className="flex justify-between items-center text-sm text-gray-500">
-                  <span>Ended: {new Date(election.end_date).toLocaleDateString()}</span>
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate(`/elections/${election.election_id}/results`)}
-                  >
-                    View Results
-                  </Button>
-                </div>
-              </div>
-            ))}
-          {elections.filter(election => election.status === 'completed').length === 0 && (
-            <p className="text-gray-500 col-span-full text-center py-4">No completed elections.</p>
+      <DashboardSection title="Completed Elections">
+        <ElectionGrid
+          elections={completed}
+          emptyMessage="No completed elections."
+          renderAction={(e) => (
+            <Button
+              variant="outline"
+              onClick={() => navigate(`/elections/${e.election_id}/results`)}
+            >
+              View Results
+            </Button>
           )}
-        </div>
-      </div>
+          dateLabel="Ended"
+          dateKey="end_date"
+        />
+      </DashboardSection>
     </div>
   );
-} 
+}
+
+// Reusable Section wrapper
+function DashboardSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-white shadow rounded-lg p-6 mb-6">
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">{title}</h2>
+      {children}
+    </div>
+  );
+}
+
+// Reusable Info item
+function InfoItem({ label, value }: { label: string; value?: string }) {
+  return (
+    <div>
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className="text-gray-900 capitalize">{value || '-'}</p>
+    </div>
+  );
+}
+
+// Reusable Election card grid
+function ElectionGrid({
+  elections,
+  renderAction,
+  dateLabel,
+  dateKey,
+  emptyMessage,
+}: {
+  elections: Election[];
+  renderAction: (election: Election) => React.ReactNode;
+  dateLabel: string;
+  dateKey: keyof Election;
+  emptyMessage: string;
+}) {
+  if (elections.length === 0) {
+    return <p className="text-gray-500 col-span-full text-center py-4">{emptyMessage}</p>;
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {elections.map((e) => (
+        <div
+          key={e.election_id}
+          className="border rounded-lg p-4 hover:shadow-md transition-shadow min-h-[140px]"
+        >
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{e.title}</h3>
+          <p className="text-gray-600 mb-4">{e.description}</p>
+          <div className="flex justify-between items-center text-sm text-gray-500">
+            <span>
+              {dateLabel}: {new Date(e[dateKey]).toLocaleDateString()}
+            </span>
+            {renderAction(e)}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
