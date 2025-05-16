@@ -177,7 +177,11 @@ function ElectionGrid({
           <p className="text-gray-600 mb-4">{e.description}</p>
           <div className="flex justify-between items-center text-sm text-gray-500">
             <span>
-              {dateLabel}: {new Date(e[dateKey]).toLocaleDateString()}
+              {dateLabel}: {
+                e[dateKey] && (typeof e[dateKey] === 'string' || typeof e[dateKey] === 'number')
+                  ? new Date(e[dateKey] as string | number).toLocaleDateString()
+                  : 'N/A'
+              }
             </span>
             {renderAction(e)}
           </div>
