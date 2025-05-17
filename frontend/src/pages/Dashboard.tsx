@@ -57,73 +57,80 @@ export function Dashboard() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+    <div className="min-h-screen py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Main White Box */}
+        <div className="bg-white shadow-xl rounded-2xl p-8 space-y-8">
+          {/* Dashboard Title Header */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-md">
+              {error}
+            </div>
+          )}
+
+          {/* User Info */}
+          <DashboardSection title={`Welcome, ${user?.full_name}`}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <InfoItem label="Email" value={user?.email} />
+              <InfoItem label="Role" value={user?.role} />
+              <InfoItem label="User ID" value={user?.user_id} />
+            </div>
+          </DashboardSection>
+
+          {/* Active Elections */}
+          <DashboardSection title="Active Elections">
+            <ElectionGrid
+              elections={active}
+              emptyMessage="No active elections scheduled."
+              renderAction={(e) => (
+                <Button size="sm" onClick={() => navigate(`/elections/${e.election_id}`)}>
+                  Vote Now
+                </Button>
+              )}
+              dateLabel="Ends"
+              dateKey="end_date"
+            />
+          </DashboardSection>
+
+          {/* Upcoming Elections */}
+          <DashboardSection title="Upcoming Elections">
+            <ElectionGrid
+              elections={upcoming}
+              emptyMessage="No upcoming elections scheduled."
+              renderAction={() => (
+                <Button variant="outline" disabled>
+                  Coming Soon
+                </Button>
+              )}
+              dateLabel="Starts"
+              dateKey="start_date"
+            />
+          </DashboardSection>
+
+          {/* Completed Elections */}
+          <DashboardSection title="Completed Elections">
+            <ElectionGrid
+              elections={completed}
+              emptyMessage="No completed elections."
+              renderAction={(e) => (
+                <Button
+                  variant="outline"
+                  onClick={() => navigate(`/elections/${e.election_id}/results`)}
+                >
+                  View Results
+                </Button>
+              )}
+              dateLabel="Ended"
+              dateKey="end_date"
+            />
+          </DashboardSection>
+        </div>
       </div>
-
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-md">
-          {error}
-        </div>
-      )}
-
-      {/* User Info */}
-      <DashboardSection title={`Welcome, ${user?.full_name}`}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <InfoItem label="Email" value={user?.email} />
-          <InfoItem label="Role" value={user?.role} />
-          <InfoItem label="User ID" value={user?.user_id} />
-        </div>
-      </DashboardSection>
-
-      {/* Active Elections */}
-      <DashboardSection title="Active Elections">
-        <ElectionGrid
-          elections={active}
-          emptyMessage="No active elections scheduled."
-          renderAction={(e) => (
-            <Button size="sm" onClick={() => navigate(`/elections/${e.election_id}`)}>
-              Vote Now
-            </Button>
-          )}
-          dateLabel="Ends"
-          dateKey="end_date"
-        />
-      </DashboardSection>
-
-      {/* Upcoming Elections */}
-      <DashboardSection title="Upcoming Elections">
-        <ElectionGrid
-          elections={upcoming}
-          emptyMessage="No upcoming elections scheduled."
-          renderAction={() => (
-            <Button variant="outline" disabled>
-              Coming Soon
-            </Button>
-          )}
-          dateLabel="Starts"
-          dateKey="start_date"
-        />
-      </DashboardSection>
-
-      {/* Completed Elections */}
-      <DashboardSection title="Completed Elections">
-        <ElectionGrid
-          elections={completed}
-          emptyMessage="No completed elections."
-          renderAction={(e) => (
-            <Button
-              variant="outline"
-              onClick={() => navigate(`/elections/${e.election_id}/results`)}
-            >
-              View Results
-            </Button>
-          )}
-          dateLabel="Ended"
-          dateKey="end_date"
-        />
-      </DashboardSection>
     </div>
   );
 }
@@ -131,8 +138,8 @@ export function Dashboard() {
 // Reusable Section wrapper
 function DashboardSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white shadow rounded-lg p-6 mb-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">{title}</h2>
+    <div className="bg-gray-200 border border-gray-200 shadow-sm rounded-xl p-6 mb-6">
+      <h2 className="text-xl font-semibold text-gray-800 mb-4">{title}</h2>
       {children}
     </div>
   );
@@ -141,9 +148,9 @@ function DashboardSection({ title, children }: { title: string; children: React.
 // Reusable Info item
 function InfoItem({ label, value }: { label: string; value?: string }) {
   return (
-    <div>
+    <div className="text-base bg-white border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition duration-200">
       <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-gray-900 capitalize">{value || '-'}</p>
+      <p className="font-medium text-gray-800">{value || '-'}</p>
     </div>
   );
 }
@@ -168,25 +175,26 @@ function ElectionGrid({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {elections.map((e) => (
-        <div
-          key={e.election_id}
-          className="border rounded-lg p-4 hover:shadow-md transition-shadow min-h-[140px]"
-        >
-          <h3 className="text-lg font-medium text-gray-900 mb-2">{e.title}</h3>
-          <p className="text-gray-600 mb-4">{e.description}</p>
-          <div className="flex justify-between items-center text-sm text-gray-500">
-            <span>
-              {dateLabel}: {
-                e[dateKey] && (typeof e[dateKey] === 'string' || typeof e[dateKey] === 'number')
+      {
+        elections.map((e) => (
+          <div
+            key={e.election_id}
+            className="rounded-xl border border-indigo-300/40 bg-white p-5 shadow hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
+          >
+            <h3 className="text-lg font-semibold text-indigo-700 mb-2">{e.title}</h3>
+            <p className="text-gray-600 mb-4 line-clamp-2">{e.description}</p>
+            <div className="flex justify-between items-center text-sm text-gray-500">
+              <span>
+                {dateLabel}:{' '}
+                {e[dateKey] && (typeof e[dateKey] === 'string' || typeof e[dateKey] === 'number')
                   ? new Date(e[dateKey] as string | number).toLocaleDateString()
-                  : 'N/A'
-              }
-            </span>
-            {renderAction(e)}
+                  : 'N/A'}
+              </span>
+              {renderAction(e)}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))
+      }
+    </div >
   );
 }

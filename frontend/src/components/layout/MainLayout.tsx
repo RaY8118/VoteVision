@@ -1,4 +1,4 @@
-import { Link, Outlet } from 'react-router-dom';
+import { NavLink, Link, Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 export function MainLayout() {
@@ -19,7 +19,8 @@ export function MainLayout() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
               <div className="flex">
-                <Link to="/" className="flex items-center">
+                <Link to="/" className="flex items-center space-x-2">
+                  <img src="/voting-box.png" alt="logo" className="h-8 w-8" />
                   <span className="text-2xl font-bold text-indigo-600">VoteVision</span>
                 </Link>
               </div>
@@ -28,7 +29,7 @@ export function MainLayout() {
               <div className="flex items-center space-x-4">
                 {isAuthenticated && !isLoading && user && (
                   <>
-                    <Link to="/profile" className="text-gray-600 hover:text-gray-900">
+                    <NavLink to="/profile" className="text-gray-600 hover:text-gray-900">
                       <div className="flex items-center space-x-2">
                         <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
                           <span className="text-indigo-600 font-medium">
@@ -37,7 +38,7 @@ export function MainLayout() {
                         </div>
                         <span className="hidden md:inline-block">{user.full_name}</span>
                       </div>
-                    </Link>
+                    </NavLink>
                   </>
                 )}
               </div>

@@ -80,14 +80,14 @@ export function Login() {
               <Button
                 variant={authMethod === 'password' ? 'default' : 'outline'}
                 onClick={() => setAuthMethod('password')}
-                className="text-lg hover:-translate-y-1 hover:border-purple-500/30 hover:shadow-[0_2px_8px_rgba(59,130,246,0.3)] transition-all"
+                className="text-lg"
               >
                 Password
               </Button>
               <Button
                 variant={authMethod === 'face' ? 'default' : 'outline'}
                 onClick={() => setAuthMethod('face')}
-                className="text-lg hover:-translate-y-1 hover:border-purple-500/30 hover:shadow-[0_2px_8px_rgba(59,130,246,0.3)] transition-all"
+                className="text-lg"
               >
                 Face Recognition
               </Button>

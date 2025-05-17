@@ -99,7 +99,7 @@ export function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 rounded-lg">
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="px-4 py-6 sm:px-0">
@@ -115,24 +115,13 @@ export function AdminDashboard() {
         )}
 
         {/* User Info Card */}
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Welcome, {user?.full_name}</h2>
+        <DashboardSection title={`Welcome, ${user?.full_name}`}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p className="text-gray-900">{user?.email}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Role</p>
-              <p className="text-gray-900 capitalize">{user?.role}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">User ID</p>
-              <p className="text-gray-900">{user?.user_id}</p>
-            </div>
+            <InfoItem label="Email" value={user?.email} />
+            <InfoItem label="Role" value={user?.role} />
+            <InfoItem label="User ID" value={user?.user_id} />
           </div>
-        </div>
-
+        </DashboardSection>
         {/* Elections Management */}
         <div className="bg-white shadow rounded-lg p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
@@ -142,21 +131,21 @@ export function AdminDashboard() {
             </Button>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full table-auto text-sm text-left text-gray-700">
+              <thead className="bg-gray-200 text-xs uppercase text-gray-500">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3">Title</th>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Start Date</th>
+                  <th className="px-6 py-3">End Date</th>
+                  <th className="px-6 py-3">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200">
                 {elections.map((election) => (
-                  <tr key={election.election_id}>
-                    <td className="px-6 py-4 whitespace-nowrap">{election.title}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr key={election.election_id} className="hover:bg-gray-50 transition-colors duration-200">
+                    <td className="px-6 py-4">{election.title}</td>
+                    <td className="px-6 py-4">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${election.status === 'active' ? 'bg-green-100 text-green-800' :
                         election.status === 'completed' ? 'bg-gray-100 text-gray-800' :
                           'bg-yellow-100 text-yellow-800'
@@ -164,10 +153,10 @@ export function AdminDashboard() {
                         {election.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{new Date(election.start_date).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{new Date(election.end_date).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex space-x-2">
+                    <td className="px-6 py-4">{new Date(election.start_date).toLocaleDateString()}</td>
+                    <td className="px-6 py-4">{new Date(election.end_date).toLocaleDateString()}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-2">
                         {election.status === 'upcoming' && (
                           <Button
                             size="sm"
@@ -227,22 +216,28 @@ export function AdminDashboard() {
               Add New Candidate
             </Button>
           </div>
+
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full table-auto text-sm text-left text-gray-700">
+              <thead className="bg-gray-200 text-xs uppercase text-gray-500">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Party</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3">Name</th>
+                  <th className="px-6 py-3">Party</th>
+                  <th className="px-6 py-3">Manifesto</th>
+                  <th className="px-6 py-3">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200">
                 {candidates.map((candidate) => (
-                  <tr key={candidate.candidate_id}>
-                    <td className="px-6 py-4 whitespace-nowrap">{candidate.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{candidate.party}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex space-x-2">
+                  <tr
+                    key={candidate.candidate_id}
+                    className="hover:bg-gray-50 transition-colors duration-200"
+                  >
+                    <td className="px-6 py-4">{candidate.name}</td>
+                    <td className="px-6 py-4">{candidate.party}</td>
+                    <td className="px-6 py-4">{candidate.manifesto}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex gap-2">
                         <Button
                           size="sm"
                           variant="outline"
@@ -261,4 +256,25 @@ export function AdminDashboard() {
       </div>
     </div>
   );
+
+
+  // Reusable Section wrapper
+  function DashboardSection({ title, children }: { title: string; children: React.ReactNode }) {
+    return (
+      <div className="bg-gray-200 border border-gray-200 shadow-sm rounded-xl p-6 mb-6">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">{title}</h2>
+        {children}
+      </div>
+    );
+  }
+
+  // Reusable Info item
+  function InfoItem({ label, value }: { label: string; value?: string }) {
+    return (
+      <div className="text-base bg-white border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition duration-200">
+        <p className="text-sm text-gray-500">{label}</p>
+        <p className="font-medium text-gray-800">{value || '-'}</p>
+      </div>
+    );
+  }
 }

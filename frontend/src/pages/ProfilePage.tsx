@@ -46,6 +46,14 @@ export function ProfilePage() {
     navigate('/');
   };
 
+  const handleDashboardClick = () => {
+    if (user?.role === 'admin') {
+      navigate('/admin');
+    } else {
+      navigate('/dashboard');
+    }
+  }
+
   const handleFaceRegistered = async () => {
     const status = await faceService.getFaceStatus();
     setFaceStatus(status);
@@ -76,9 +84,14 @@ export function ProfilePage() {
           <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-8">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold text-white">Profile</h1>
-              <Button variant="secondary" onClick={handleLogout} className="bg-red-600 hover:bg-red-700 text-white">
-                Logout
-              </Button>
+              <div className="flex space-x-4">
+                <Button variant="secondary" onClick={handleDashboardClick} className="bg-white hover:bg-gray-100 text-indigo-600">
+                  Dashboard
+                </Button>
+                <Button variant="secondary" onClick={handleLogout} className="bg-red-600 hover:bg-red-700 text-white">
+                  Logout
+                </Button>
+              </div>
             </div>
           </div>
 
