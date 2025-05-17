@@ -9,20 +9,16 @@ interface FaceVerificationModalProps {
 }
 
 export function FaceVerificationModal({ onClose, onVerified }: FaceVerificationModalProps) {
-  const [isCapturing, setIsCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleCapture = async (image: File) => {
     try {
-      setIsCapturing(true);
       setError(null);
       await faceService.verifyFace(image);
       onVerified();
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Face verification failed. Please try again.');
       console.error('Face verification error:', err);
-    } finally {
-      setIsCapturing(false);
     }
   };
 
