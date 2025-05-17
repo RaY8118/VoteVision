@@ -40,9 +40,9 @@ git clone <repository-url>
 cd voting-system/backend
 ```
 
-2. Install dependencies using Poetry
+2. Install dependencies using pip 
 ```bash
-poetry install
+pip install -r requirements.txt
 ```
 
 3. Create a `.env` file in the backend directory:
@@ -60,7 +60,7 @@ poetry run alembic upgrade head
 
 5. Start the development server
 ```bash
-poetry run uvicorn app.main:app --reload
+uvicorn app.main:app --reload
 ```
 
 The API will be available at `http://localhost:8000`

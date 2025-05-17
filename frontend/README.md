@@ -80,7 +80,6 @@ frontend/
 - `bun run build` - Build for production
 - `bun run preview` - Preview production build
 - `bun run lint` - Run ESLint
-- `bun run type-check` - Run TypeScript type checking
 
 ## Contributing
 
