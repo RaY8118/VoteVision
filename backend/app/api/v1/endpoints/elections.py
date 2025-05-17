@@ -132,3 +132,21 @@ def get_election_candidates(
 ):
     """Get all candidates registered for an election"""
     return election_service.get_election_candidates(db, election_id)
+
+
+@router.get("/{election_id}/vote-status")
+async def check_vote_status(
+    election_id: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    """Check if the current user has voted in this election"""
+    vote = db.query(models.Vote).filter(
+        models.Vote.election_id == election_id,
+        models.Vote.voter_id == current_user.user_id
+    ).first()
+    
+    if not vote:
+        raise HTTPException(status_code=404, detail="Vote not found")
+    
+    return {"has_voted": True}

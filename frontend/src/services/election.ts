@@ -85,6 +85,10 @@ export class ElectionService {
     const response = await api.get(`/elections/${electionId}/results`);
     return response.data;
   }
+
+  async checkVoteStatus(electionId: string): Promise<void> {
+    await api.get(`/elections/${electionId}/vote-status`);
+  }
 }
 
 export const electionService = new ElectionService(); 

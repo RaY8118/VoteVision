@@ -30,6 +30,7 @@ class FaceService {
 
   async verifyFace(image: string | File): Promise<void> {
     if (typeof image === 'string') {
+      // Convert base64 to blob
       const response = await fetch(image);
       const blob = await response.blob();
       const file = new File([blob], 'face.jpg', { type: 'image/jpeg' });
@@ -41,7 +42,7 @@ class FaceService {
 
   private async uploadVerification(file: File): Promise<void> {
     const formData = new FormData();
-    formData.append('face_image', file);
+    formData.append('image', file);
     await api.post('/auth/face/verify', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

@@ -5,6 +5,8 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
 import base64
+import numpy as np
+import face_recognition
 
 from app.core.token import create_access_token
 from app.db import models, schemas
@@ -29,7 +31,7 @@ def login_user(login_data: schemas.LoginInput, db: Session = Depends(get_db)):
     """Login a user"""
     user = user_service.login_user(db, login_data.email, login_data.password)
     token = create_access_token(
-        data={"sub": str(user.user_id)}, auth_type="password")
+        data={"sub": str(user.user_id), "auth_type": "password"})
     return {"access_token": token, "token_type": "bearer"}
 
 
@@ -71,13 +73,13 @@ def login_with_face(
     """Login a user with face data"""
     user = user_service.login_with_face(db, image)
     token = create_access_token(
-        data={"sub": str(user.user_id)}, auth_type="face")
+        data={"sub": str(user.user_id), "auth_type": "face"})
     return {"access_token": token, "token_type": "bearer"}
 
 
 @router.post("/face/verify")    
 async def verify_face(  
-    face_data: schemas.FaceVerificationRequest,
+    image: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
@@ -88,25 +90,43 @@ async def verify_face(
             detail="Face data not registered. Please register your face first."
         )
     
-    is_verified = face_recognition_service.verify_face(
-        current_user.face_encoding,
-        face_data.face_image
-    )
+    # Process the uploaded image
+    image_data = face_recognition.load_image_file(image.file)
+    encodings = face_recognition.face_encodings(image_data)
+    if not encodings:
+        raise HTTPException(
+            status_code=400,
+            detail="No face found in the image"
+        )
     
-    if not is_verified:
+    input_encoding = encodings[0]
+    stored_encoding = np.frombuffer(current_user.face_encoding, dtype=np.float64)
+    
+    # Compare faces
+    results = face_recognition.compare_faces([stored_encoding], input_encoding, tolerance=0.6)
+    
+    if not results[0]:
         raise HTTPException(
             status_code=401,
             detail="Face verification failed"
         )
     
-    verification_session = models.FaceVerificationSession(
-        user_id=current_user.user_id,
-        expires_at=datetime.utcnow() + timedelta(minutes=5)
-    )
-    db.add(verification_session)
-    db.commit()
-    
-    return {"message": "Face verification successful"}
+    try:
+        # Create verification session
+        verification_session = models.FaceVerificationSession(
+            user_id=current_user.user_id,
+            expires_at=datetime.utcnow() + timedelta(minutes=5)
+        )
+        db.add(verification_session)
+        db.commit()
+        
+        return {"message": "Face verification successful"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create verification session: {str(e)}"
+        )
 
 
 @router.get("/face-status", response_model=dict)

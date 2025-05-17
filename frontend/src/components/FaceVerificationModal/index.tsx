@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { faceService } from '../../services/face';
+import { WebcamComponent } from '../ui/Webcam';
 
 interface FaceVerificationModalProps {
   onClose: () => void;
@@ -11,26 +12,11 @@ export function FaceVerificationModal({ onClose, onVerified }: FaceVerificationM
   const [isCapturing, setIsCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleCapture = async () => {
+  const handleCapture = async (image: File) => {
     try {
       setIsCapturing(true);
       setError(null);
-
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      const video = document.createElement('video');
-      video.srcObject = stream;
-      await video.play();
-
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx?.drawImage(video, 0, 0);
-
-      const imageData = canvas.toDataURL('image/jpeg');
-      stream.getTracks().forEach(track => track.stop());
-
-      await faceService.verifyFace(imageData);
+      await faceService.verifyFace(image);
       onVerified();
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Face verification failed. Please try again.');
@@ -55,12 +41,16 @@ export function FaceVerificationModal({ onClose, onVerified }: FaceVerificationM
           </div>
         )}
 
+        <div className="mb-4">
+          <WebcamComponent
+            onCapture={handleCapture}
+            onError={setError}
+          />
+        </div>
+
         <div className="flex justify-end gap-3">
           <Button variant="outline" onClick={onClose}>
             Cancel
-          </Button>
-          <Button onClick={handleCapture} disabled={isCapturing}>
-            {isCapturing ? 'Verifying...' : 'Verify Face'}
           </Button>
         </div>
       </div>

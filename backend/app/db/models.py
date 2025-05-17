@@ -2,6 +2,7 @@ from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer,
                         LargeBinary, String, func, Enum)
 from sqlalchemy.orm import relationship
 import enum
+from datetime import datetime
 
 from .database import Base
 
@@ -18,6 +19,7 @@ class User(Base):
     face_encoding = Column(LargeBinary, nullable=True)
 
     votes = relationship("Vote", back_populates="voter")
+    verification_sessions = relationship("FaceVerificationSession", back_populates="user")
 
 
 class Candidate(Base):
@@ -73,3 +75,14 @@ class ElectionCandidate(Base):
     election_id = Column(String, ForeignKey("elections.election_id"), primary_key=True)
     candidate_id = Column(String(6), ForeignKey("candidates.candidate_id"), primary_key=True)
     registration_date = Column(DateTime, nullable=False, server_default=func.now())
+
+
+class FaceVerificationSession(Base):
+    __tablename__ = "face_verification_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String(6), ForeignKey("users.user_id"), nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="verification_sessions")

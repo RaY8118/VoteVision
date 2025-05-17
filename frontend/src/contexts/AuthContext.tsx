@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { authService } from '../services/auth';
 
@@ -13,6 +13,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  authType: 'face' | 'password' | null;
   logout: () => void;
   login: (token: string) => void;
 }
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
+  const [authType, setAuthType] = useState<'face' | 'password' | null>(null);
 
   const { data: user, isLoading } = useQuery({
     queryKey: ['user'],
@@ -28,7 +30,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const token = authService.getToken();
       if (!token) return null;
       try {
-        return await authService.getCurrentUser();
+        const userData = await authService.getCurrentUser();
+        // Decode JWT token to get auth type
+        const tokenData = JSON.parse(atob(token.split('.')[1]));
+        setAuthType(tokenData.auth_type);
+        return userData;
       } catch (error) {
         authService.logout();
         return null;
@@ -47,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     authService.logout();
+    setAuthType(null);
     queryClient.setQueryData(['user'], null);
     queryClient.invalidateQueries({ queryKey: ['user'] });
   };
@@ -57,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user: user ?? null,
         isLoading,
         isAuthenticated: !!user,
+        authType,
         logout,
         login,
       }}
