@@ -37,10 +37,12 @@ def create_user(db: Session, user: schemas.UserCreate):
         return db_user
     except SQLAlchemyError as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Database error: {str(e)}")
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Error creating user: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error creating user: {str(e)}")
 
 
 def verify_password(plain_password: str, hashed_password: str):
@@ -87,7 +89,8 @@ def update_user_role(db: Session, user_id: str, new_role: str):
         return user
     except SQLAlchemyError as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Database error: {str(e)}")
 
 
 def create_user_with_face(db: Session, user: schemas.UserCreate, image_file: UploadFile):
@@ -123,10 +126,38 @@ def create_user_with_face(db: Session, user: schemas.UserCreate, image_file: Upl
         return db_user
     except SQLAlchemyError as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Database error: {str(e)}")
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Error creating user: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error creating user: {str(e)}")
+
+
+def add_face_data_to_user(db: Session, user: models.User, image_file: UploadFile):
+    """Add face data to an existing user"""
+    try:
+        image = face_recognition.load_image_file(image_file.file)
+        encodings = face_recognition.face_encodings(image)
+        if not encodings:
+            raise HTTPException(
+                status_code=400, detail="No face found in the image")
+
+        face_encoding = np.array(encodings[0])
+        user.face_encoding = face_encoding.tobytes()
+
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user
+    except SQLAlchemyError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500, detail=f"Database error: {str(e)}")
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500, detail=f"Error adding face data: {str(e)}")
 
 
 def login_with_face(db: Session, image_file: UploadFile):
@@ -139,18 +170,22 @@ def login_with_face(db: Session, image_file: UploadFile):
                 status_code=400, detail="No face found in the image")
 
         input_encoding = encodings[0]
-        
+
         # Get all users with face data
-        users = db.query(models.User).filter(models.User.face_encoding.isnot(None)).all()
-        
+        users = db.query(models.User).filter(
+            models.User.face_encoding.isnot(None)).all()
+
         # Compare with all registered faces
         for user in users:
-            stored_encoding = np.frombuffer(user.face_encoding, dtype=np.float64)
-            results = face_recognition.compare_faces([stored_encoding], input_encoding, tolerance=0.6)
-            
+            stored_encoding = np.frombuffer(
+                user.face_encoding, dtype=np.float64)
+            results = face_recognition.compare_faces(
+                [stored_encoding], input_encoding, tolerance=0.6)
+
             if results[0]:
                 return user
 
         raise HTTPException(status_code=404, detail="Face not recognized")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error during face login: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error during face login: {str(e)}")
