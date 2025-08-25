@@ -12,14 +12,9 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Voting System with Face Recogition")
 app.include_router(api_router, prefix="/api/v1")
 
-# Configure CORS
-allowed_origins = os.getenv("ALLOWED_ORIGINS")
-origins = [origins.strip()
-           for origins in allowed_origins.split(",") if origins.strip()]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins="*",
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
