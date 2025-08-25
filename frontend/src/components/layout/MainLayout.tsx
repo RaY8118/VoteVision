@@ -1,5 +1,5 @@
-import { NavLink, Link, Outlet } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { NavLink, Link, Outlet } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 export function MainLayout() {
   const { user, isLoading, isAuthenticated } = useAuth();
@@ -8,9 +8,12 @@ export function MainLayout() {
     <div className="min-h-screen bg-gray-50">
       {/* Background with gradient and pattern */}
       <div className="fixed inset-0 h-full w-full z-0 bg-gradient-to-br from-indigo-400 via-purple-300 to-pink-200">
-        <div className="absolute inset-0 opacity-30" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }}></div>
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        ></div>
       </div>
 
       {/* Content */}
@@ -21,7 +24,9 @@ export function MainLayout() {
               <div className="flex">
                 <Link to="/" className="flex items-center space-x-2">
                   <img src="/voting-box.png" alt="logo" className="h-8 w-8" />
-                  <span className="text-2xl font-bold text-indigo-600">VoteVision</span>
+                  <span className="text-2xl font-bold text-indigo-600">
+                    VoteVision
+                  </span>
                 </Link>
               </div>
 
@@ -29,14 +34,19 @@ export function MainLayout() {
               <div className="flex items-center space-x-4">
                 {isAuthenticated && !isLoading && user && (
                   <>
-                    <NavLink to="/profile" className="text-gray-600 hover:text-gray-900">
+                    <NavLink
+                      to="/profile"
+                      className="text-gray-600 hover:text-gray-900"
+                    >
                       <div className="flex items-center space-x-2">
                         <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
                           <span className="text-indigo-600 font-medium">
-                            {user.full_name.charAt(0).toUpperCase()}
+                            {(user?.full_name || '').charAt(0).toUpperCase()}
                           </span>
                         </div>
-                        <span className="hidden md:inline-block">{user.full_name}</span>
+                        <span className="hidden md:inline-block">
+                          {user?.full_name}
+                        </span>
                       </div>
                     </NavLink>
                   </>
@@ -51,4 +61,4 @@ export function MainLayout() {
       </div>
     </div>
   );
-} 
+}

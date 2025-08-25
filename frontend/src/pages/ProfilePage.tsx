@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import { authService } from '../services/auth';
-import { faceService, FaceStatus } from '../services/face';
-import { FaceRegistrationModal } from '../components/FaceRegistrationModal/index';
-import { useAuth } from '../contexts/AuthContext';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "../components/ui/button";
+import { authService } from "../services/auth";
+import { faceService, FaceStatus } from "../services/face";
+import { FaceRegistrationModal } from "../components/FaceRegistrationModal/index";
+import { useAuth } from "../contexts/AuthContext";
 
 interface User {
   user_id: string;
@@ -27,12 +27,12 @@ export function ProfilePage() {
       try {
         const [userData, faceData] = await Promise.all([
           authService.getCurrentUser(),
-          faceService.getFaceStatus()
+          faceService.getFaceStatus(),
         ]);
         setUser(userData);
         setFaceStatus(faceData);
       } catch (err) {
-        setError('Failed to load user data');
+        setError("Failed to load user data");
       } finally {
         setIsLoading(false);
       }
@@ -43,16 +43,16 @@ export function ProfilePage() {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   const handleDashboardClick = () => {
-    if (user?.role === 'admin') {
-      navigate('/admin');
+    if (user?.role === "admin") {
+      navigate("/admin");
     } else {
-      navigate('/dashboard');
+      navigate("/dashboard");
     }
-  }
+  };
 
   const handleFaceRegistered = async () => {
     const status = await faceService.getFaceStatus();
@@ -85,10 +85,18 @@ export function ProfilePage() {
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold text-white">Profile</h1>
               <div className="flex space-x-4">
-                <Button variant="secondary" onClick={handleDashboardClick} className="bg-white hover:bg-gray-100 text-indigo-600">
+                <Button
+                  variant="secondary"
+                  onClick={handleDashboardClick}
+                  className="bg-white hover:bg-gray-100 text-indigo-600"
+                >
                   Dashboard
                 </Button>
-                <Button variant="secondary" onClick={handleLogout} className="bg-red-600 hover:bg-red-700 text-white">
+                <Button
+                  variant="secondary"
+                  onClick={handleLogout}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
                   Logout
                 </Button>
               </div>
@@ -106,11 +114,13 @@ export function ProfilePage() {
             {/* User Info */}
             <div className="space-y-6">
               <div>
-                <h2 className="text-lg font-medium text-gray-900">Personal Information</h2>
+                <h2 className="text-lg font-medium text-gray-900">
+                  Personal Information
+                </h2>
                 <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <p className="text-sm text-gray-500">Full Name</p>
-                    <p className="mt-1 text-gray-900">{user.full_name}</p>
+                    <p className="mt-1 text-gray-900">{user?.full_name}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Email</p>
@@ -128,15 +138,19 @@ export function ProfilePage() {
               </div>
 
               {/* Face Recognition Status */}
-              {user.role === 'voter' && (
+              {user.role === "voter" && (
                 <div>
-                  <h2 className="text-lg font-medium text-gray-900">Face Recognition</h2>
+                  <h2 className="text-lg font-medium text-gray-900">
+                    Face Recognition
+                  </h2>
                   <div className="mt-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-500">Status</p>
                         <p className="mt-1 text-gray-900">
-                          {faceStatus?.has_face_data ? 'Registered' : 'Not Registered'}
+                          {faceStatus?.has_face_data
+                            ? "Registered"
+                            : "Not Registered"}
                         </p>
                       </div>
                       {!faceStatus?.has_face_data && (
@@ -161,4 +175,4 @@ export function ProfilePage() {
       )}
     </div>
   );
-} 
+}

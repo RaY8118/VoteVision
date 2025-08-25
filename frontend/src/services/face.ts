@@ -6,21 +6,25 @@ export interface FaceStatus {
 }
 
 class FaceService {
-  async registerFace(image: string | File): Promise<void> {
+  async registerFace(image: string | File, email?: string, fullName?: string, password?: string, role?: string): Promise<void> {
     if (typeof image === 'string') {
       // Convert base64 to blob
       const response = await fetch(image);
       const blob = await response.blob();
       const file = new File([blob], 'face.jpg', { type: 'image/jpeg' });
-      await this.uploadFace(file);
+      await this.uploadFace(file, email, fullName, password, role);
     } else {
-      await this.uploadFace(image);
+      await this.uploadFace(image, email, fullName, password, role);
     }
   }
 
-  private async uploadFace(file: File): Promise<void> {
+  private async uploadFace(file: File, email?: string, fullName?: string, password?: string, role?: string): Promise<void> {
     const formData = new FormData();
     formData.append('image', file);
+    if (email) formData.append('email', email);
+    if (fullName) formData.append('full_name', fullName);
+    if (password) formData.append('password', password);
+    if (role) formData.append('role', role);
     await api.post('/auth/register/face', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
