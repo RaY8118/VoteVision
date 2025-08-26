@@ -1,25 +1,31 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import { WebcamComponent } from '../components/ui/Webcam';
-import { authService } from '../services/auth';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/card';
+import { WebcamComponent } from "../components/ui/Webcam";
+import { authService } from "../services/auth";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "../components/ui/card";
 
 export function Register() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [authMethod, setAuthMethod] = useState<'password' | 'face'>('password');
+  const [authMethod, setAuthMethod] = useState<"password" | "face">("password");
   const [formData, setFormData] = useState({
-    email: '',
-    full_name: '',
-    password: '',
-    confirmPassword: '',
+    email: "",
+    full_name: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -27,7 +33,7 @@ export function Register() {
     setError(null);
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
 
@@ -37,9 +43,11 @@ export function Register() {
       const { confirmPassword, ...registerData } = formData;
       const response = await authService.registerWithPassword(registerData);
       authService.setToken(response.access_token);
-      navigate('/dashboard');
+      navigate("/login");
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to register. Please try again.');
+      setError(
+        err.response?.data?.detail || "Failed to register. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -57,9 +65,12 @@ export function Register() {
         password: formData.password,
       });
       authService.setToken(response.access_token);
-      navigate('/dashboard');
+      navigate("/login");
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Face registration failed. Please try again.');
+      setError(
+        err.response?.data?.detail ||
+          "Face registration failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -71,8 +82,11 @@ export function Register() {
         <CardHeader>
           <CardTitle className="text-center">Create your account</CardTitle>
           <CardDescription className="text-center">
-            Already have an account?{' '}
-            <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
               Sign in
             </Link>
           </CardDescription>
@@ -80,7 +94,10 @@ export function Register() {
 
         <CardContent>
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded relative" role="alert">
+            <div
+              className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded relative"
+              role="alert"
+            >
               <span className="block sm:inline">{error}</span>
             </div>
           )}
@@ -88,22 +105,22 @@ export function Register() {
           <div className="space-y-6">
             <div className="flex justify-center space-x-4">
               <Button
-                variant={authMethod === 'password' ? 'default' : 'outline'}
-                onClick={() => setAuthMethod('password')}
+                variant={authMethod === "password" ? "default" : "outline"}
+                onClick={() => setAuthMethod("password")}
                 className="text-lg hover:-translate-y-1 hover:border-purple-500/30 hover:shadow-[0_2px_8px_rgba(59,130,246,0.3)] transition-all"
               >
                 Password
               </Button>
               <Button
-                variant={authMethod === 'face' ? 'default' : 'outline'}
-                onClick={() => setAuthMethod('face')}
+                variant={authMethod === "face" ? "default" : "outline"}
+                onClick={() => setAuthMethod("face")}
                 className="text-lg hover:-translate-y-1 hover:border-purple-500/30 hover:shadow-[0_2px_8px_rgba(59,130,246,0.3)] transition-all"
               >
                 Face Recognition
               </Button>
             </div>
 
-            {authMethod === 'password' ? (
+            {authMethod === "password" ? (
               <form className="space-y-6" onSubmit={handlePasswordSubmit}>
                 <div className="space-y-4">
                   <div>
@@ -179,7 +196,7 @@ export function Register() {
                       Creating account...
                     </>
                   ) : (
-                    'Create Account'
+                    "Create Account"
                   )}
                 </Button>
               </form>
@@ -237,8 +254,8 @@ export function Register() {
                   onError={setError}
                 />
                 <p className="text-sm text-gray-600 text-center">
-                  Position your face within the circle and click capture.
-                  Make sure you have good lighting and a clear view of your face.
+                  Position your face within the circle and click capture. Make
+                  sure you have good lighting and a clear view of your face.
                 </p>
               </div>
             )}
@@ -247,4 +264,4 @@ export function Register() {
       </Card>
     </div>
   );
-} 
+}
