@@ -33,6 +33,6 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/voting-backend:${{ github.sha }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/voting-backend:latest
           cache-from: type=gha,scope=backend-build
           cache-to: type=gha,scope=backend-build,mode=max
